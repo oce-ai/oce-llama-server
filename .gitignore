@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# uv
+uv.lock.bak
+
+# IDE / 本地配置 (含本机路径与用户名, 不要入库)
+.idea/
+.vscode/
+*.iml
+
+# 运行时产物
+logs/
+.serve.pid
+.serve_daemon.sh
+
+# 模型权重 (体积大, 不入库)
+*.gguf
+*.safetensors
+models/
+
+# 环境变量 / 密钥
+.env
+.env.*

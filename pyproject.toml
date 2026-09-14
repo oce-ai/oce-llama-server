@@ -1,0 +1,20 @@
+[project]
+name = "oce-llama-server"
+version = "0.1.0"
+description = "单进程单端口同时提供嵌入与重排的本地推理服务 (llama.cpp + GGUF)"
+readme = "README.md"
+requires-python = ">=3.10"
+
+# 注意: llama-cpp-python 不在这里声明。
+# 它需要匹配本机 GPU/CUDA 的预编译 wheel, 由 scripts/install_llama_cpp.py
+# 自动探测并从 GitHub release 安装; 写进 dependencies 会让 uv sync 触发
+# 源码编译 (需要 nvcc), 既慢又容易失败。
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn>=0.27",
+    "numpy>=1.26",
+]
+
+[tool.uv]
+# 这是个应用而非可安装的库: 不让 uv 把当前目录当包构建。
+package = false

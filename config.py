@@ -52,7 +52,7 @@ def _extract_model_name(filename: str) -> str:
     name = re.sub(r'(\d)\s*[Bb]$', r'\1b', name)
     # 5. 清理首尾多余的分隔符
     name = name.strip('._-')
-    return name
+    return name.lower()
 
 
 @dataclass(frozen=True)

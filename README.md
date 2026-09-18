@@ -317,6 +317,34 @@ uv run python scripts/install_llama_cpp.py --dry-run   # 看选中的 wheel tag,
 > cudart 版本号要和 wheel 对得上（wheel 是 cu132 就配 CUDA 13.x 的 cudart），否则
 > 仍会因 dll 版本不符而加载失败。装完重启服务即可。
 
+### Linux + conda 启动报 "GLIBCXX_3.4.30 not found"
+
+```
+RuntimeError: Failed to load shared library
+'.../site-packages/llama_cpp/lib/libllama.so':
+.../lib/libstdc++.so.6: version `GLIBCXX_3.4.30' not found
+(required by .../llama_cpp/lib/libggml-cuda.so.0)
+```
+
+conda 自带的 `libstdc++.so.6` 版本太老，不含 CUDA wheel 需要的 `GLIBCXX_3.4.30`
+符号（gcc 12+ 才提供）。注意报错指向的 `libstdc++.so.6` 是 **conda 环境里**的那个
+（在 `$CONDA_PREFIX/lib/`），系统自带的可能反而是新的——所以不能只看系统版本。
+
+解决：装 conda-forge 的 `libstdcxx-ng` 覆盖老版本：
+
+```bash
+conda install -c conda-forge libstdcxx-ng -y
+```
+
+验证（确认 `$CONDA_PREFIX/lib/libstdc++.so.6` 已包含所需符号）：
+
+```bash
+strings $CONDA_PREFIX/lib/libstdc++.so.6 | grep GLIBCXX_3.4.30
+```
+
+> 若装完仍报错，检查 `LD_LIBRARY_PATH` 是否把另一个旧的 `libstdc++.so.6` 排在了
+> conda 环境前面；必要时 `unset LD_LIBRARY_PATH` 后重启服务再试。
+
 ### 显存不足 / 想纯 CPU
 
 降低上下文长度或关闭 GPU 卸载：
